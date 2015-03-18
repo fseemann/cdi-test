@@ -6,6 +6,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Qualifier for marking connection for automatic cleanup
+ * <p>
+ *     Marking a Connection with this annotation will lead to automatic cleanup <em>before</em> each test case.
+ * </p>
+ */
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
