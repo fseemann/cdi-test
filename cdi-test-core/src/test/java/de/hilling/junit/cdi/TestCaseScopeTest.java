@@ -1,6 +1,7 @@
 package de.hilling.junit.cdi;
 
 import de.hilling.junit.cdi.scopedbeans.*;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -48,12 +49,12 @@ public class TestCaseScopeTest extends CdiTestAbstract {
     }
 
     @BeforeClass
-    public void setUpClass() {
+    public static void setUpClass() {
         ApplicationScopedBean.resetCounters();
     }
 
-    @Test
-    public void countApplicationScopes() {
+    @AfterClass
+    public static void countApplicationScopes() {
         ApplicationScopedBean.getCreations();
     }
 
