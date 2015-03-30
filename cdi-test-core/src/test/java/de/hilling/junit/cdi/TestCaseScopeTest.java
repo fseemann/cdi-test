@@ -2,6 +2,7 @@ package de.hilling.junit.cdi;
 
 import de.hilling.junit.cdi.scopedbeans.*;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.inject.Inject;
@@ -44,6 +45,16 @@ public class TestCaseScopeTest extends CdiTestAbstract {
         DependentScopedBean dependent1 = requestScopedBean.getDependentScopedBean();
         DependentScopedBean dependent2 = applicationScopedBean.getDependentScopedBean();
         Assert.assertNotSame(dependent1, dependent2);
+    }
+
+    @BeforeClass
+    public void setUpClass() {
+        ApplicationScopedBean.resetCounters();
+    }
+
+    @Test
+    public void countApplicationScopes() {
+        ApplicationScopedBean.getCreations();
     }
 
     private void assertInstances() {
