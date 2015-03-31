@@ -1,10 +1,11 @@
 package de.hilling.junit.cdi;
 
 import de.hilling.junit.cdi.scopedbeans.*;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import java.util.UUID;
  *
  * @author gunnar
  */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestCaseScopeTest extends CdiTestAbstract {
 
     private static Map<Class<?>, UUID> firstUuids = new HashMap<>();
@@ -30,15 +32,35 @@ public class TestCaseScopeTest extends CdiTestAbstract {
     private RequestScopedBean requestScopedBean;
     @Inject
     private SessionScopedBean sessionScopedBean;
+    @Inject
+    private CreationCounter creationCounter;
 
-    @Test
-    public void testOne() {
-        assertInstances();
+    @Before
+    public void setUp() {
+        applicationScopedBean.getDependentScopedBean();
     }
 
     @Test
-    public void testTwo() {
+    public void test1() {
         assertInstances();
+        assertCreationsDeletions(1, 0, ApplicationScopedBean.class);
+    }
+
+    private void assertCreationsDeletions(int creations, int deletions, Class<?> beanClass) {
+        Assert.assertEquals("creations", creations, creationCounter.getCreations(beanClass));
+        Assert.assertEquals("deletions", deletions, creationCounter.getDeletions(beanClass));
+    }
+
+    @Test
+    public void test2() {
+        assertInstances();
+        assertCreationsDeletions(2, 1, ApplicationScopedBean.class);
+    }
+
+    @Test
+    public void test3() {
+        assertInstances();
+        assertCreationsDeletions(3, 2, ApplicationScopedBean.class);
     }
 
     @Test
@@ -46,16 +68,6 @@ public class TestCaseScopeTest extends CdiTestAbstract {
         DependentScopedBean dependent1 = requestScopedBean.getDependentScopedBean();
         DependentScopedBean dependent2 = applicationScopedBean.getDependentScopedBean();
         Assert.assertNotSame(dependent1, dependent2);
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-        ApplicationScopedBean.resetCounters();
-    }
-
-    @AfterClass
-    public static void countApplicationScopes() {
-        ApplicationScopedBean.getCreations();
     }
 
     private void assertInstances() {
